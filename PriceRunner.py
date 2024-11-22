@@ -85,14 +85,19 @@ def display_animation():
         time.sleep(0.1)
     print("\rBearbetningen är klar!          ")
 
+
 def main():
     # Input och output fil
     input_filename = "PriceRunner - Input.csv"
     brand_name = input("Ange varumärkets namn: ").strip()
     current_date = datetime.datetime.now().strftime("%Y-%m-%d")
-    output_filename = f"{brand_name} - Output ({current_date}).csv"
 
-    with open(input_filename, mode="r", encoding="utf-8") as infile, open(output_filename, mode="w", newline="", encoding="utf-8") as csvfile:
+    # Ange sökväg till Downloads-mappen
+    downloads_folder = r"C:\Users\vigge\Downloads"
+    output_filename = f"{downloads_folder}\\{brand_name} - Output ({current_date}).csv"
+
+    with open(input_filename, mode="r", encoding="utf-8") as infile, open(output_filename, mode="w", newline="",
+                                                                          encoding="utf-8") as csvfile:
         reader = csv.DictReader(infile)
         fieldnames = reader.fieldnames + ["BrandName", "Sell Price", "Color", "Offer ID"]
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -133,6 +138,7 @@ def main():
     os.system(f'git commit -m "Automatisk commit från {brand_name} script run"')
     os.system('git push origin main')
     print("Ändringar pushades framgångsrikt till GitHub!")
+
 
 if __name__ == "__main__":
     main()
