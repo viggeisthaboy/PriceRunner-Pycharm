@@ -1,8 +1,11 @@
+import os  # För Git-kommandon och ljud
 import requests
 import csv
 import time
 import random
 import re
+import datetime
+import ctypes  # För Windows-notifikation
 
 # URLs for API endpoints
 search_url = "https://www.pricerunner.se/se/api/search-compare-gateway/public/search/v5/SE?q={EAN}"
@@ -98,8 +101,11 @@ def fetch_price_and_merchant_info(product_id, expected_color=None):
     return offers_list
 
 def main():
+    downloads_folder = r"C:\Users\vigge\Downloads"
     input_filename = "PriceRunner - Input.csv"
-    output_filename = "BergsPotter.csv"
+    brand_name = input("Ange varumärkets namn: ").strip()
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d")
+    output_filename = f"{downloads_folder}\\{brand_name} - Output ({current_date}).csv"
 
     with open(input_filename, mode="r", encoding="utf-8") as infile, open(output_filename, mode="w", newline="", encoding="utf-8") as csvfile:
         reader = csv.DictReader(infile)
@@ -142,6 +148,18 @@ def main():
                 writer.writerow(row)
 
             time.sleep(random.randint(1, 6))
+
+    print(f"Bearbetningen är klar. Output sparades i: {output_filename}")
+
+    # Ljud och notifikation
+    ctypes.windll.user32.MessageBoxW(0, f"Output sparades i: {output_filename}", "Skriptet är klart!", 1)
+
+    # Git automation
+    print("Pushing changes to GitHub...")
+    os.system('git add .')
+    os.system(f'git commit -m "Automatisk commit från {brand_name} script run"')
+    os.system('git push origin main')
+    print("Ändringar pushades framgångsrikt till GitHub!")
 
 if __name__ == "__main__":
     main()
